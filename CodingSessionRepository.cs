@@ -50,6 +50,19 @@ namespace CSharp__Codingtracker
             var sql = "SELECT * FROM CodingSessions";
             return connection.Query<CodingSession>(sql).ToList();
         }
-        
+
+        public void DeleteInput(int id)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            var sql = "DELETE FROM CodingSessions WHERE Id = @Id";
+            connection.Execute(sql, new { Id = id });
+        }
+
+        public void UpdateInput(CodingSession codingSession)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            var sql = "UPDATE CodingSessions SET StartTime=@StartTime, EndTime=@EndTime, Duration=@Duration WHERE Id = @Id ";
+            connection.Execute(sql, codingSession);
+        }
     }
 }
