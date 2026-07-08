@@ -43,6 +43,13 @@ namespace CSharp__Codingtracker
                       """;
             connection.Execute(sql, codingSession);
         }
+
+        public List<CodingSession> RetrieveData()
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            var sql = "SELECT * FROM CodingSessions";
+            return connection.Query<CodingSession>(sql).ToList();
+        }
         
     }
 }
