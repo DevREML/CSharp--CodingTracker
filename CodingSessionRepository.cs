@@ -28,7 +28,7 @@ namespace CSharp__Codingtracker
                           Id INTEGER PRIMARY KEY AUTOINCREMENT,
                           StartTime TEXT NOT NULL,
                           EndTime TEXT NOT NULL,
-                          Duration TEXT NOT NULL)
+                          Duration INTEGER NOT NULL)
                       """;
             connection.Execute(sql);
         }
@@ -41,14 +41,33 @@ namespace CSharp__Codingtracker
                       INSERT INTO CodingSessions (StartTime, EndTime, Duration)
                       VALUES (@StartTime, @EndTime, @Duration)
                       """;
-            connection.Execute(sql, codingSession);
+            connection.Execute(sql, new
+                {
+                    codingSession.StartTime,
+                    codingSession.EndTime,
+                    Duration = codingSession.Duration.TotalSeconds
+                });
         }
 
         public List<CodingSession> RetrieveData()
         {
             using var connection = new SqliteConnection(_connectionString);
             var sql = "SELECT * FROM CodingSessions";
-            return connection.Query<CodingSession>(sql).ToList();
+            var rows = connection.Query(sql);
+            
+            var sessions = new List<CodingSession>();
+            foreach (var row in rows)
+            {
+                var session = new CodingSession()
+                {
+                    Id = (int)row.Id,
+                    StartTime= Convert.ToDateTime(row.StartTime),
+                    EndTime = Convert.ToDateTime(row.EndTime),
+                    Duration = TimeSpan.FromSeconds(row.Duration)
+                };
+                sessions.Add(session);
+            }
+            return sessions;
         }
 
         public void DeleteInput(int id)
@@ -62,7 +81,13 @@ namespace CSharp__Codingtracker
         {
             using var connection = new SqliteConnection(_connectionString);
             var sql = "UPDATE CodingSessions SET StartTime=@StartTime, EndTime=@EndTime, Duration=@Duration WHERE Id = @Id ";
-            connection.Execute(sql, codingSession);
+            connection.Execute(sql, new
+            {
+                codingSession.Id,
+                codingSession.StartTime,
+                codingSession.EndTime,
+                Duration = codingSession.Duration.TotalSeconds,
+            });
         }
     }
 }

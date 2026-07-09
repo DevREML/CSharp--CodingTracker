@@ -1,16 +1,22 @@
-﻿namespace Main
+﻿namespace CSharp__Codingtracker
 {
-    public class MainProgram
+    public class Program
     {
         public static void Main()
         {
             Console.WriteLine("Welcome to the Coding Tracker!");
             Console.WriteLine("------------------------------");
-            
-            // Ask the user for the date and time to be logged
-            // date and time has to be logged in a specific format
-            
-            // The user should also be able to input the start and end times manually.
+
+            var repository = new CodingSessionRepository();
+            repository.InitializeDatabase();
+
+            var controller = new CodingController();
+            controller.LogSession();
+
+            var sessions = repository.RetrieveData();
+            var presentData = new PresentData();
+            presentData.DisplaySessions(sessions);
+
         }
     }
 }
