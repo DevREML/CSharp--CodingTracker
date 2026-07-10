@@ -11,11 +11,7 @@
             repository.InitializeDatabase();
 
             var controller = new CodingController();
-            controller.LogSession();
-
-            var sessions = repository.RetrieveData();
-            var presentData = new PresentData();
-            presentData.DisplaySessions(sessions);
+            controller.ShowMenu();
 
         }
     }
